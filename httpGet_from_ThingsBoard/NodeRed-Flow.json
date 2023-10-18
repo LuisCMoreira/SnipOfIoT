@@ -1,0 +1,142 @@
+[
+    {
+        "id": "32cbefe0.f045c",
+        "type": "tab",
+        "label": "GetDED_Data",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "394fe6b0.e6c96a",
+        "type": "debug",
+        "z": "32cbefe0.f045c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 1058.0078086853027,
+        "y": 83.56643867492676,
+        "wires": []
+    },
+    {
+        "id": "66493619.bf57d8",
+        "type": "http request",
+        "z": "32cbefe0.f045c",
+        "name": "Get Info",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://192.168.201.208:9090/api/plugins/telemetry/DEVICE/<device-ID>values/timeseries",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 725.999981880188,
+        "y": 142.59763526916504,
+        "wires": [
+            [
+                "394fe6b0.e6c96a"
+            ]
+        ]
+    },
+    {
+        "id": "cab6092b.973628",
+        "type": "inject",
+        "z": "32cbefe0.f045c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 208.00000762939453,
+        "y": 83.99999046325684,
+        "wires": [
+            [
+                "55c19172.31329"
+            ]
+        ]
+    },
+    {
+        "id": "218bd11b.c7e4ee",
+        "type": "function",
+        "z": "32cbefe0.f045c",
+        "name": "Set headers",
+        "func": "\nvar key= \"Bearer \" + msg.payload.token;\n\n\nmsg.headers={ 'Content-Type' : 'application/json',\n  'X-Authorization': key };\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 755.0039043426514,
+        "y": 72.140625,
+        "wires": [
+            [
+                "66493619.bf57d8"
+            ]
+        ]
+    },
+    {
+        "id": "c9cb5a3a.4243b8",
+        "type": "http request",
+        "z": "32cbefe0.f045c",
+        "name": "Get Token",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://192.168.201.208:9090/api/auth/login",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "credentials": {},
+        "x": 441.9960823059082,
+        "y": 137.78119468688965,
+        "wires": [
+            [
+                "218bd11b.c7e4ee"
+            ]
+        ]
+    },
+    {
+        "id": "55c19172.31329",
+        "type": "function",
+        "z": "32cbefe0.f045c",
+        "name": "Set login",
+        "func": "\n\nmsg.headers={ 'Content-Type' : 'application/json',\n    'Accept' : 'application/json'};\n    \n    msg.payload={ 'username' : 'tenant@thingsboard.org',\n    'password' : 'tenant'};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 438.00001525878906,
+        "y": 68.32418727874756,
+        "wires": [
+            [
+                "c9cb5a3a.4243b8"
+            ]
+        ]
+    }
+]
